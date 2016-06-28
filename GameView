@@ -1,0 +1,159 @@
+package com.example.eeshan.tappinggame;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Eeshan on 2/15/2016.
+ */
+public class GameView extends SurfaceView {
+    private static int _gameScore = 0;
+    private long _lastClick;
+    private Bitmap _bitmap;
+    private SurfaceHolder _holder;                          //Good for editing and monitoring pixels on surface.
+    //private int _positionX = 0;
+    //private int _speedX = 1;
+    private List<SpriteClass> _spriteList = new ArrayList<SpriteClass>();
+    private GameLoop _gameLoop;
+    private SpriteClass _spriteClass;
+    public GameView(Context context) {
+        super(context);
+        _gameLoop = new GameLoop(this);
+        _holder = getHolder();
+        _holder.addCallback(new SurfaceHolder.Callback() {          //Needed for checking changes in surface.
+
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                Boolean flag = true;
+                _gameLoop.setRunning(false);
+                while(flag){
+                    try {
+                        _gameLoop.join();
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+//                Canvas canvas = _holder.lockCanvas(null);           //Start editing pixels on surface.
+//                onDraw(canvas);
+//                _holder.unlockCanvasAndPost(canvas);                //Finish editing pixels on surface.
+                createImages();
+                _gameLoop.setRunning(true);
+                _gameLoop.start();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+
+        });
+
+    }
+    private void createImages(){
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+        _spriteList.add(createSprite(R.drawable.blue_ball));
+        _spriteList.add(createSprite(R.drawable.red_ball));
+
+    }
+    private SpriteClass createSprite(int $resource){
+        _bitmap = BitmapFactory.decodeResource(getResources(), $resource);
+        return new SpriteClass(this,_bitmap);
+    }
+    protected void onDraw(Canvas $canvas){
+        $canvas.drawColor(Color.BLACK);
+        for(SpriteClass sprite:_spriteList)
+            sprite.onDraw($canvas);
+
+      //  $canvas.drawText(""+_gameScore, 10, 25,new Paint());
+
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+
+        if(System.currentTimeMillis() - _lastClick>500){
+            _lastClick = System.currentTimeMillis();
+            synchronized (getHolder()){
+                for(int i = _spriteList.size()-1;i>=0;i--){
+//                    if(_spriteList.get(i).equals(R.drawable.red_ball)){
+//
+//                        System.exit(0);
+//                    }
+                    SpriteClass spriteObject = _spriteList.get(i);
+
+//                    Log.i("Detecting contents<<<<",""+spriteObject.toString());
+//                    if(spriteObject.equals(R.drawable.red_ball)){
+//
+//                        System.exit(0);
+//                    }
+                    if(spriteObject.isColliding(event.getX(), event.getY())){
+//                        if(_spriteList.get(i).equals(R.drawable.red_ball)){
+//                            _gameScore = _gameScore + 1;
+//                            _spriteList.remove(spriteObject);
+//                            break;
+//                        }
+//                        else{
+//                            _gameScore = _gameScore - 1;
+//                            _spriteList.remove(spriteObject);
+//                            break;
+//                        }
+                        _spriteList.remove(spriteObject);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+}
