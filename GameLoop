@@ -1,0 +1,48 @@
+package com.example.eeshan.tappinggame;
+
+import android.graphics.Canvas;
+
+/**
+ * Created by Eeshan on 2/15/2016.
+ */
+public class GameLoop extends Thread {
+    private static final long FPS = 10;          //Experiment with this value
+    private GameView _gameView;
+    private boolean _running = false;
+
+    public GameLoop(GameView gameView){
+        this._gameView = gameView;
+    }
+    public void setRunning(Boolean $flag){
+        _running = $flag;
+    }
+    public void run(){
+        long tick = 1000/FPS;
+        long startTime;
+        long sleepTime;
+        while(_running){
+            Canvas canvas = null;
+            startTime = System.currentTimeMillis();
+            try{
+                canvas = _gameView.getHolder().lockCanvas();
+                synchronized (_gameView.getHolder()){
+                    _gameView.onDraw(canvas);
+                }
+            }
+            finally {
+                if(canvas!=null){
+                    _gameView.getHolder().unlockCanvasAndPost(canvas);
+                }
+            }
+            sleepTime = tick - (System.currentTimeMillis()-startTime);
+            try{
+                if(sleepTime>0)
+                    sleep(sleepTime);
+                else
+                    sleep(10);              //Change this value based on how much the CPU is affected performance-wise
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
