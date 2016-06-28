@@ -1,0 +1,50 @@
+package com.example.eeshan.tappinggame;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.util.Random;
+
+/**
+ * Created by Eeshan on 2/16/2016.
+ */
+public class SpriteClass {
+    private Bitmap _bitmap;
+    private int _positionX;
+    private int _positionY;
+    private int _speedX ;
+    private int _speedY;
+   // private int _currentFrame = 0;
+    private GameView _gameView;
+
+    private Random _randVar;
+    public SpriteClass(GameView $gameView,Bitmap $bitmap){
+        _gameView = $gameView;
+        _bitmap = $bitmap;
+        _randVar = new Random();
+        _speedX = _randVar.nextInt(50)-5;
+        _speedY = _randVar.nextInt(50)-5;
+        _positionX = _randVar.nextInt(_gameView.getWidth()-_bitmap.getWidth());
+        _positionY = _randVar.nextInt(_gameView.getHeight()-_bitmap.getHeight());
+    }
+    public boolean isColliding(float $clickX, float $clickY){
+//        Log.d("Detecting click","detetion done");
+//        Log.i("Detecting click","detetion done");
+        return $clickX>_positionX&&$clickX<_positionX+_bitmap.getWidth()&&$clickY>_positionY&&$clickY<_positionY+_bitmap.getHeight();
+    }
+
+    private void update() {
+        if(_positionX>_gameView.getWidth()-_bitmap.getWidth()-_speedX||_positionX+_speedX<0)
+            _speedX = -_speedX;
+        _positionX = _positionX + _speedX;
+        if(_positionY>_gameView.getHeight()-_bitmap.getHeight()-_speedY||_positionY+_speedY<0)
+            _speedY = -_speedY;
+        _positionY = _positionY + _speedY;
+    }
+    protected void onDraw(Canvas $canvas){
+        update();
+        $canvas.drawBitmap(_bitmap,_positionX,_positionY,null);
+    }
+}
